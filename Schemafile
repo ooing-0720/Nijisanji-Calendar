@@ -1,0 +1,29 @@
+# Collaboration Table
+create_table "Collaborations", id: :bigint, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "コラボ" do |t|
+  t.string "title", null: false, comment: "コラボ名"
+  t.string "image", comment: "コラボ代表イメージ"
+  t.string "detail", null: true, comment: "コラボ説明"
+  t.json "members", null: false, comment: "メンバー"
+  t.json "units", comment: "ユニットコラボの場合ユニット名"
+  t.integer "type", null: false, comment: "オンライン/オフライン"
+  t.json "nations", null: false, comment: "JP/EN/KR"
+  t.string "link", comment: "案件リンク"
+  t.integer "category", null: false, comment: "コラボ商品の週類"
+  t.datetime "started_at", null: false, comment: "コラボ開始日"
+  t.datetime "finished_at", null: false, comment: "コラボ最終日"
+  t.index "started_at"
+end
+
+# Nijisanji Unit Table
+create_table "Units", id: :bigint, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "ユニット" do |t|
+  t.string "name"
+  t.integer "nation"
+end
+
+# Nijisanji Menber Table
+create_table "Members", id: :bigint, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "メンバー" do |t|
+  t.string "name"
+  t.string "sex"
+  t.integer "unit_id"
+  t.date "birthday", null: false
+end

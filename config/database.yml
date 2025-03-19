@@ -1,0 +1,20 @@
+default: &default
+  adapter: mysql2
+  encoding: utf8
+  pool: 5
+  username: root
+  password: root0123
+  port: 3306
+  host: localhost
+  database: calendar
+  socket: /tmp/mysql.sock
+  ssl_mode: DISABLED
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
