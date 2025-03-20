@@ -1,29 +1,53 @@
 # Collaboration Table
-create_table "Collaborations", id: :bigint, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "コラボ" do |t|
-  t.string "title", null: false, comment: "コラボ名"
-  t.string "image", comment: "コラボ代表イメージ"
-  t.string "detail", null: true, comment: "コラボ説明"
-  t.json "members", null: false, comment: "メンバー"
-  t.json "units", comment: "ユニットコラボの場合ユニット名"
-  t.integer "type", null: false, comment: "オンライン/オフライン"
-  t.json "nations", null: false, comment: "JP/EN/KR"
-  t.string "link", comment: "案件リンク"
-  t.integer "category", null: false, comment: "コラボ商品の週類"
-  t.datetime "started_at", null: false, comment: "コラボ開始日"
-  t.datetime "finished_at", null: false, comment: "コラボ最終日"
-  t.index "started_at"
+create_table "Collaborations", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "コラボ" do |t|
+  t.string  "title", null: false, comment: "コラボ名"
+  t.string  "image", comment: "コラボ代表イメージ"
+  t.string  "detail", comment: "コラボ説明"
+  t.integer "collab_type", null: false, comment: "オンライン/オフライン"
+  t.integer "collab_category", null: false, comment: "コラボ商品の種類"
+  t.string  "link", comment: "案件リンク"
+  t.datetime  "started_at", null: false, comment: "コラボ開始日"
+  t.datetime  "finished_at", null: false, comment: "コラボ最終日"
+  t.index   "started_at"
 end
 
 # Nijisanji Unit Table
-create_table "Units", id: :bigint, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "ユニット" do |t|
-  t.string "name"
-  t.integer "nation"
+create_table "Units", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "ユニット" do |t|
+  t.string "name", null: false, comment: "ユニット名"
+  t.integer "nation", null: false, comment: "JP/EN/KR"
 end
 
 # Nijisanji Menber Table
-create_table "Members", id: :bigint, unsigned: true, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "メンバー" do |t|
-  t.string "name"
-  t.string "sex"
-  t.integer "unit_id"
-  t.date "birthday", null: false
+create_table "Members", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "メンバー" do |t|
+  t.string "name", null: false, comment: "名前"
+  t.string "sex", comment: "性別"
+  t.integer "unit_id", comment: "ユニットID"
+  t.date "birthday", null: false, comment: "誕生日"
+  t.foreign_key "units", on_delete: :nullify
+  t.index "unit_id"
+end
+
+# Collaboration Member Table
+create_table "CollaborationMembers", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "コラボとメンバーの関連" do |t|
+  t.bigint "collaboration_id", null: false, comment: "コラボID"
+  t.bigint "member_id", null: false, comment: "メンバーID"
+  
+  t.foreign_key :collaborations, column: :collaboration_id, on_delete: :cascade
+  t.foreign_key :members, column: :member_id, on_delete: :cascade
+  
+  t.index :collaboration_id
+  t.index :member_id
+end
+
+
+# Collaboration Unit Table
+create_table "CollaborationUnits", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "コラボとユニットの関連" do |t|
+  t.bigint "collaboration_id", null: false, comment: "コラボID"
+  t.bigint "unit_id", null: false, comment: "ユニットID"
+  
+  t.foreign_key :collaborations, column: :collaboration_id, on_delete: :cascade
+  t.foreign_key :units, column: :unit_id, on_delete: :cascade
+  
+  t.index :collaboration_id
+  t.index :unit_id
 end
